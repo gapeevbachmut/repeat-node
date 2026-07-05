@@ -27,28 +27,25 @@ app.use(
   }),
 );
 
-// Логування часу
-app.use((req, res, next) => {
-  console.log(`Time: ${new Date().toLocaleString()}`);
-  next();
-});
-
 // Перший маршрут
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Hello - world!' });
 });
 
-// GET-запит до маршруту "/health"
-app.get('/health', (req, res) => {
+// GET-запит до маршруту "/notes" - усі нотатки
+app.get('/notes', (req, res) => {
   res.status(200).json({
-    status: 'Ok!',
+    message: 'Retrieved all notes',
   });
 });
 
-// Маршрут для тестування middleware помилки
-app.get('/test-error', (req, res) => {
-  // Штучна помилка для прикладу
-  throw new Error('Something went wrong');
+// одна нотатка за ID
+app.get('/notes/:noteId', (req, res) => {
+  const { noteId } = req.params;
+  res.status(200).json({
+    id: noteId,
+    message: 'Retrieved note with ID: id_param',
+  });
 });
 
 app.post('/users', (req, res) => {
