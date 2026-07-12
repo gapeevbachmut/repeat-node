@@ -1,85 +1,44 @@
 // src/server.js
 import express from 'express';
 import cors from 'cors';
-import pino from 'pino-http';
 import 'dotenv/config';
 import helmet from 'helmet';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import studentsRoutes from './routes/studentsRoutes.js';
+import notesRoutes from './routes/notesRoutes.js';
+import usersRoutes from './routes/usersRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-// Middleware для парсингу JSON
-app.use(express.json());
-app.use(cors()); // Дозволяє запити з будь-яких джерел
-app.use(helmet());
-app.use(
-  pino({
-    level: 'info',
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss',
-        ignore: 'pid,hostname',
-        messageFormat:
-          '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
-        hideObject: true,
-      },
-    },
-  }),
-);
+// Глобальні middleware
+app.use(logger); // 1. Логер першим — бачить усі запити
+app.use(express.json()); // 2. Middleware для парсингу JSON
+app.use(cors()); // 3. Дозволяє запити з будь-яких джерел
+app.use(helmet()); // безпека
 
 // Перший маршрут
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Hello - wWworld!' });
 });
 
-// GET-запит до маршруту "/notes" - усі нотатки
-app.get('/notes', (req, res) => {
-  res.status(200).json({
-    message: 'Retrieved all notes',
-  });
-});
+app.use(studentsRoutes);
+app.use(notesRoutes);
+app.use(usersRoutes);
 
-// одна нотатка за ID
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-  res.status(200).json({
-    id: noteId,
-    message: 'Retrieved note with ID: id_param',
-  });
-});
+/////////////////////////////////////
 
-app.post('/users', (req, res) => {
-  console.log(req.body); // тепер тіло доступне як JS-об`єкт
-  res.status(201).json({ message: 'User created' });
-});
+// 404 — якщо маршрут не знайдено
+app.use(notFoundHandler);
 
-// Middleware 404 (після всіх маршрутів)
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
+// Error — якщо під час запиту виникла помилка
+app.use(errorHandler);
 
-// Middleware для обробки помилок
-// app.use((err, req, res, next) => {
-//   console.error('Error:', err.message);
-//   res.status(500).json({
-//     message: 'Internal Server Error',
-//     error: err.message,
-//   });
-// });
-
-app.use((err, req, res, next) => {
-  console.error(err);
-
-  const isProd = process.env.NODE_ENV === 'production';
-
-  res.status(500).json({
-    message: isProd
-      ? 'Something went wrong. Please try again later.'
-      : err.message,
-  });
-});
+// підключення до MongoDB
+await connectMongoDB();
 
 // Запуск сервера
 app.listen(PORT, () => {
