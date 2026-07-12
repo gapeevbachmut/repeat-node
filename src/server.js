@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import 'dotenv/config';
+import helmet from 'helmet';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -10,6 +11,7 @@ const PORT = process.env.PORT ?? 3000;
 // Middleware для парсингу JSON
 app.use(express.json());
 app.use(cors()); // Дозволяє запити з будь-яких джерел
+app.use(helmet());
 app.use(
   pino({
     level: 'info',
@@ -29,7 +31,7 @@ app.use(
 
 // Перший маршрут
 app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello - world!' });
+  res.status(200).json({ message: 'Hello - wWworld!' });
 });
 
 // GET-запит до маршруту "/notes" - усі нотатки
