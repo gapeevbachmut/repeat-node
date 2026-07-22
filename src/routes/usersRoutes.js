@@ -1,10 +1,18 @@
 import { Router } from 'express';
+import {
+  createUser,
+  deleteUser,
+  getUserById,
+  getUsers,
+  updateUser,
+} from '../controllers/usersController.js';
 
 const router = Router();
 
-router.post('/users', (req, res) => {
-  console.log(req.body); // тепер тіло доступне як JS-об`єкт
-  res.status(201).json({ message: 'User created' });
-});
+router.get('/users', getUsers);
+router.get('/users/:userId', getUserById);
+router.post('/users', createUser);
+router.delete('/users/:userId', deleteUser);
+router.patch('/users/:userId', updateUser);
 
 export default router;
