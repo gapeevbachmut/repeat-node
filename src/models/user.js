@@ -11,6 +11,7 @@ const userSchema = new Schema(
       type: String,
       required: false,
       trim: true,
+      unique: true,
     },
     age: {
       type: Number,
