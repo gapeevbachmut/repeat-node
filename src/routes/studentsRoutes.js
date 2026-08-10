@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { celebrate } from 'celebrate';
+
 import {
   createStudent,
   deleteStudent,
@@ -6,13 +8,30 @@ import {
   getStudents,
   updateStudent,
 } from '../controllers/studentsController.js';
+import {
+  createStudentSchema,
+  studentIdParamSchema,
+  updateStudentSchema,
+} from '../validations/studentsValidation.js';
 
 const router = Router();
 
 router.get('/students', getStudents);
-router.get('/students/:studentId', getStudentById);
-router.post('/students', createStudent);
-router.delete('/students/:studentId', deleteStudent);
-router.patch('/students/:studentId', updateStudent);
+router.get(
+  '/students/:studentId',
+  celebrate(studentIdParamSchema),
+  getStudentById,
+);
+router.post('/students', celebrate(createStudentSchema), createStudent);
+router.delete(
+  '/students/:studentId',
+  celebrate(studentIdParamSchema),
+  deleteStudent,
+);
+router.patch(
+  '/students/:studentId',
+  celebrate(updateStudentSchema),
+  updateStudent,
+);
 
 export default router;
