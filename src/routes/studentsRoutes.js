@@ -10,13 +10,14 @@ import {
 } from '../controllers/studentsController.js';
 import {
   createStudentSchema,
+  getStudentsSchema,
   studentIdParamSchema,
   updateStudentSchema,
 } from '../validations/studentsValidation.js';
 
 const router = Router();
 
-router.get('/students', getStudents);
+router.get('/students', celebrate(getStudentsSchema), getStudents);
 router.get(
   '/students/:studentId',
   celebrate(studentIdParamSchema),

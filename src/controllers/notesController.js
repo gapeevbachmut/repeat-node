@@ -2,8 +2,31 @@ import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
 export const getNotes = async (req, res) => {
-  const notes = await Note.find();
-  res.status(200).json(notes);
+  // вказую параметри пагінації
+  const { page = 1, perPage = 5 } = req.query;
+  const skip = (page - 1) * perPage;
+
+  // базовий запит до колекції
+  const notesQuery = Note.find();
+
+  //виконуємо два запити паралельно
+  const [totalItems, notes] = await Promise.all([
+    notesQuery.clone().countDocuments(),
+    // .countDocuments() — підраховує загальну кількість студентів у колекції.
+    notesQuery.skip(skip).limit(perPage),
+    // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+  ]);
+
+  // Обчислюємо загальну кількість «сторінок»
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    notes,
+  });
 };
 
 export const getNoteById = async (req, res) => {

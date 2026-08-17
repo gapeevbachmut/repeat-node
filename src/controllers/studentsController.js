@@ -4,9 +4,56 @@ import { Student } from '../models/student.js';
 import createHttpError from 'http-errors';
 
 export const getStudents = async (req, res) => {
-  const students = await Student.find();
-  res.status(200).json(students);
+  // вказую параметри пагінації
+  const {
+    // для пагінації
+    page = 1,
+    perPage = 5,
+    //додаю параметри для фільтрації
+    gender,
+    minAvgMark,
+  } = req.query;
+  const skip = (page - 1) * perPage;
+
+  // базовий запит до колекції
+  const studentsQuery = Student.find();
+
+  // Будуємо фільтр
+  if (gender) {
+    studentsQuery.where('gender').equals(gender);
+  }
+
+  if (minAvgMark) {
+    studentsQuery.where('avgMark').gte(minAvgMark);
+  }
+
+  /*
+  .where('age').gte(6).lte(10)   // вік від 6 до 10 включно
+  .where('avgMark').gt(7)        // середній бал більше 7
+  */
+
+  //-//-//-//-//-//-//
+  //виконуємо два запити паралельно
+  const [totalItems, students] = await Promise.all([
+    studentsQuery.clone().countDocuments(),
+    // .countDocuments() — підраховує загальну кількість студентів у колекції.
+    studentsQuery.skip(skip).limit(perPage),
+    // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+  ]);
+
+  // Обчислюємо загальну кількість «сторінок»
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    students,
+  });
 };
+
+// отримати студента по ID
 
 export const getStudentById = async (req, res) => {
   const { studentId } = req.params;

@@ -1,6 +1,15 @@
 import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
 
+// додавання пагінації у запит get
+export const getNotesSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20),
+  }),
+};
+
+// валідація моделі нотатки
 const bodySchema = Joi.object({
   title: Joi.string().min(3).max(30).required().messages({
     'string.base': 'Title must be a string',

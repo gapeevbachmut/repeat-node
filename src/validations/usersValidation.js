@@ -3,6 +3,14 @@
 import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
 
+// додавання пагінації у запит get
+export const getUserSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20),
+  }),
+};
+// валідація моделі usera
 const bodySchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
     'string.base': 'Name must be a string',
@@ -37,10 +45,14 @@ export const userIdParamSchema = {
   [Segments.PARAMS]: userIdSchema,
 };
 
-// оновлення нотатки
+// оновлення юзера
 const bodyShemaUpdateUser = Joi.object({
-  name: Joi.string(),
-  // дописати
+  name: Joi.string().min(3).max(30),
+  email: Joi.string(),
+  age: Joi.number().integer().min(12).max(65),
+  role: Joi.string().valid('guest', 'user', 'admin'),
+  password: Joi.string(),
+  awatar: Joi.string(),
 });
 
 export const updateUserSchema = {

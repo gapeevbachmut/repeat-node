@@ -2,8 +2,31 @@ import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 
 export const getUsers = async (req, res) => {
-  const users = await User.find();
-  res.status(200).json(users);
+  // вказую параметри пагінації
+  const { page = 1, perPage = 5 } = req.query;
+  const skip = (page - 1) * perPage;
+
+  // базовий запит до колекції
+  const usersQuery = User.find();
+
+  //виконуємо два запити паралельно
+  const [totalItems, users] = await Promise.all([
+    usersQuery.clone().countDocuments(),
+    // .countDocuments() — підраховує загальну кількість студентів у колекції.
+    usersQuery.skip(skip).limit(perPage),
+    // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+  ]);
+
+  // Обчислюємо загальну кількість «сторінок»
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    users,
+  });
 };
 
 export const getUserById = async (req, res) => {

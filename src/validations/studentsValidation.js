@@ -1,6 +1,19 @@
 import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
 
+// додавання пагінації у запит get
+export const getStudentsSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20),
+
+    // додати параметри для фільтрації можна фідповідно до моделі
+    // по кожному або по деяким!!!
+    gender: Joi.string().valid('male', 'female', 'other'),
+    minAvgMark: Joi.number().positive(),
+  }),
+};
+
 // валідація моделі студента
 const bodySchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
