@@ -9,6 +9,9 @@ export const getStudentsSchema = {
 
     // додати параметри для фільтрації можна фідповідно до моделі
     // по кожному або по деяким!!!
+    name: Joi.string().trim(),
+    minAge: Joi.number().positive().integer(),
+    maxAge: Joi.number().positive().integer(),
     gender: Joi.string().valid('male', 'female', 'other'),
     minAvgMark: Joi.number().positive(),
   }),

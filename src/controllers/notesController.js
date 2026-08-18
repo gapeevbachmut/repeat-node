@@ -3,11 +3,34 @@ import createHttpError from 'http-errors';
 
 export const getNotes = async (req, res) => {
   // вказую параметри пагінації
-  const { page = 1, perPage = 5 } = req.query;
+  const {
+    page = 1,
+    perPage = 5,
+    //додаю параметри для фільтрації
+    title,
+    content,
+    tag,
+  } = req.query;
   const skip = (page - 1) * perPage;
 
   // базовий запит до колекції
   const notesQuery = Note.find();
+
+  // Будуємо фільтр
+  if (title) {
+    notesQuery.where('title').regex(new RegExp(title, 'i'));
+    //'i' означає ігнорувати регістр.
+  }
+
+  if (content) {
+    notesQuery.where('content').regex(new RegExp(content, 'i'));
+    //'i' означає ігнорувати регістр.
+  }
+
+  if (tag) {
+    notesQuery.where('tag').equals(tag);
+    // повне співпадіння
+  }
 
   //виконуємо два запити паралельно
   const [totalItems, notes] = await Promise.all([

@@ -10,6 +10,9 @@ export const getStudents = async (req, res) => {
     page = 1,
     perPage = 5,
     //додаю параметри для фільтрації
+    name,
+    minAge,
+    maxAge,
     gender,
     minAvgMark,
   } = req.query;
@@ -19,6 +22,17 @@ export const getStudents = async (req, res) => {
   const studentsQuery = Student.find();
 
   // Будуємо фільтр
+  if (name) {
+    studentsQuery.where('name').regex(new RegExp(name, 'i'));
+    //'i' означає ігнорувати регістр.
+  }
+  if (minAge) {
+    studentsQuery.where('age').gte(minAge);
+  }
+  if (maxAge) {
+    studentsQuery.where('age').lte(maxAge);
+  }
+
   if (gender) {
     studentsQuery.where('gender').equals(gender);
   }

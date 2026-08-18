@@ -1,11 +1,19 @@
 import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
+import { noteTags } from '../constants/noteTags.js';
 
 // додавання пагінації у запит get
 export const getNotesSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
+
+    // додати параметри для фільтрації можна фідповідно до моделі
+    // по кожному або по деяким!!!
+    title: Joi.string().trim(),
+    content: Joi.string().trim(),
+    tag: Joi.string().valid(...noteTags),
+    // ... розгортає масив з noteTags
   }),
 };
 
