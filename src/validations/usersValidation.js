@@ -10,6 +10,9 @@ export const getUserSchema = {
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
 
+    // текстовий пошук for name
+    search: Joi.string().trim().allow(''),
+
     // додати параметри для фільтрації можна фідповідно до моделі
     // по кожному або по деяким!!!
     name: Joi.string().trim(),

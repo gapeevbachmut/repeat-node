@@ -8,22 +8,25 @@ export const getNotes = async (req, res) => {
     perPage = 5,
     //додаю параметри для фільтрації
     title,
-    content,
     tag,
+    //параметри для пошуку
+    search,
   } = req.query;
   const skip = (page - 1) * perPage;
 
   // базовий запит до колекції
   const notesQuery = Note.find();
 
+  // Пошук по частині content
+  if (search) {
+    notesQuery.where({
+      content: { $regex: search, $options: 'i' },
+    });
+  }
+
   // Будуємо фільтр
   if (title) {
     notesQuery.where('title').regex(new RegExp(title, 'i'));
-    //'i' означає ігнорувати регістр.
-  }
-
-  if (content) {
-    notesQuery.where('content').regex(new RegExp(content, 'i'));
     //'i' означає ігнорувати регістр.
   }
 

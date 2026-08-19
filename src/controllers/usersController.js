@@ -3,17 +3,20 @@ import { User } from '../models/user.js';
 
 export const getUsers = async (req, res) => {
   // вказую параметри пагінації
-  const { page = 1, perPage = 5, name, minAge, maxAge, role } = req.query;
+  const { page = 1, perPage = 5, search, minAge, maxAge, role } = req.query;
   const skip = (page - 1) * perPage;
 
   // базовий запит до колекції
   const usersQuery = User.find();
 
-  // Будуємо фільтр
-  if (name) {
-    usersQuery.where('name').regex(new RegExp(name, 'i'));
+  // Пошук по частині імені
+  if (search) {
+    usersQuery.where({
+      name: { $regex: search, $options: 'i' },
+    });
   }
 
+  // Будуємо фільтр
   if (minAge) {
     usersQuery.where('age').gte(minAge);
     // більше або дорівнює

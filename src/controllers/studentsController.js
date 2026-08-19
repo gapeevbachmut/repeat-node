@@ -10,22 +10,28 @@ export const getStudents = async (req, res) => {
     page = 1,
     perPage = 5,
     //додаю параметри для фільтрації
-    name,
     minAge,
     maxAge,
     gender,
     minAvgMark,
+    //параметри для пошуку
+    search,
   } = req.query;
+
   const skip = (page - 1) * perPage;
 
   // базовий запит до колекції
   const studentsQuery = Student.find();
 
-  // Будуємо фільтр
-  if (name) {
-    studentsQuery.where('name').regex(new RegExp(name, 'i'));
-    //'i' означає ігнорувати регістр.
+  // Пошук по частині імені
+  if (search) {
+    studentsQuery.where({
+      name: { $regex: search, $options: 'i' },
+    });
   }
+
+  // Будуємо фільтр
+
   if (minAge) {
     studentsQuery.where('age').gte(minAge);
   }
@@ -41,10 +47,7 @@ export const getStudents = async (req, res) => {
     studentsQuery.where('avgMark').gte(minAvgMark);
   }
 
-  /*
-  .where('age').gte(6).lte(10)   // вік від 6 до 10 включно
-  .where('avgMark').gt(7)        // середній бал більше 7
-  */
+  // текстовий пошук
 
   //-//-//-//-//-//-//
   //виконуємо два запити паралельно

@@ -8,10 +8,12 @@ export const getNotesSchema = {
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
 
+    // текстовий пошук - content
+    search: Joi.string().trim().allow(''),
+
     // додати параметри для фільтрації можна фідповідно до моделі
     // по кожному або по деяким!!!
     title: Joi.string().trim(),
-    content: Joi.string().trim(),
     tag: Joi.string().valid(...noteTags),
     // ... розгортає масив з noteTags
   }),

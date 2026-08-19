@@ -32,4 +32,7 @@ const userSchema = new Schema(
   },
 );
 
+// Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
+userSchema.index({ age: 1, role: 1 });
+
 export const User = model('User', userSchema);

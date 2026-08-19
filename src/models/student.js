@@ -32,4 +32,7 @@ const studentSchema = new Schema(
   },
 );
 
+studentSchema.index({ age: 1, gender: 1, avgMark: 1 });
+// Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
+
 export const Student = model('Student', studentSchema);

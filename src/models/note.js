@@ -25,4 +25,7 @@ const noteScema = new Schema(
   },
 );
 
+// Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
+noteScema.index({ title: 1, tag: 1 });
+
 export const Note = model('Note', noteScema);
