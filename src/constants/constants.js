@@ -10,3 +10,7 @@ export const noteTags = [
   'Important',
   'Todo',
 ];
+
+export const studentsGender = ['male', 'female', 'other'];
+
+export const usersRole = ['guest', 'user', 'admin'];

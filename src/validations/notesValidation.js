@@ -1,6 +1,6 @@
 import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
-import { noteTags } from '../constants/noteTags.js';
+import { noteTags } from '../constants/constants.js';
 
 // додавання пагінації у запит get
 export const getNotesSchema = {

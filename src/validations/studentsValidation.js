@@ -1,5 +1,6 @@
 import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
+import { studentsGender } from '../constants/constants.js';
 
 // додавання пагінації у запит get
 export const getStudentsSchema = {
@@ -12,7 +13,7 @@ export const getStudentsSchema = {
     name: Joi.string().trim(),
     minAge: Joi.number().positive().integer(),
     maxAge: Joi.number().positive().integer(),
-    gender: Joi.string().valid('male', 'female', 'other'),
+    gender: Joi.string().valid(...studentsGender),
     minAvgMark: Joi.number().positive(),
   }),
 };
