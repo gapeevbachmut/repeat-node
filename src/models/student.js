@@ -34,5 +34,6 @@ const studentSchema = new Schema(
 
 studentSchema.index({ age: 1, gender: 1, avgMark: 1 });
 // Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
+/**не треба створювати індекс на кожне поле тільки тому, що по ньому є фільтр. */
 
 export const Student = model('Student', studentSchema);

@@ -2,9 +2,10 @@ import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
 import { studentsGender } from '../constants/constants.js';
 
-// додавання пагінації у запит get
+// GET запит на отримання усієї колекції
 export const getStudentsSchema = {
   [Segments.QUERY]: Joi.object({
+    // додавання пагінації у запит get
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
 
@@ -17,6 +18,14 @@ export const getStudentsSchema = {
     maxAge: Joi.number().positive().integer(),
     gender: Joi.string().valid(...studentsGender),
     minAvgMark: Joi.number().positive(),
+
+    // сортування
+    sortBy: Joi.string().valid('_id', 'name', 'age', 'avgMark').default('_id'),
+    sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
+    /*
+     sortBy → поле для сортування (_id, name, age, avgMark);
+     sortOrder → напрямок (asc або desc), за замовчуванням "asc".
+    */
   }),
 };
 

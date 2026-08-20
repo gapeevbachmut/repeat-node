@@ -2,8 +2,21 @@ import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 
 export const getUsers = async (req, res) => {
-  // вказую параметри пагінації
-  const { page = 1, perPage = 5, search, minAge, maxAge, role } = req.query;
+  const {
+    // вказую параметри пагінації
+    page = 1,
+    perPage = 5,
+    //параметри для пошуку
+    search,
+    //додаю параметри для фільтрації
+    minAge,
+    maxAge,
+    role,
+    // сортування - вказуємо параметри
+    // дефолтне сортування за name
+    sortBy = 'name',
+    sortOrder = 'asc',
+  } = req.query;
   const skip = (page - 1) * perPage;
 
   // базовий запит до колекції
@@ -32,11 +45,17 @@ export const getUsers = async (req, res) => {
   }
 
   //виконуємо два запити паралельно
+  // тут вказуємо параметри для пагінації + сортування
+
   const [totalItems, users] = await Promise.all([
     usersQuery.clone().countDocuments(),
     // .countDocuments() — підраховує загальну кількість студентів у колекції.
-    usersQuery.skip(skip).limit(perPage),
-    // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+    usersQuery
+      .skip(skip)
+      .limit(perPage)
+      // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+      // Додаємо сортування в ланцюжок методів квері
+      .sort({ [sortBy]: sortOrder }),
   ]);
 
   // Обчислюємо загальну кількість «сторінок»

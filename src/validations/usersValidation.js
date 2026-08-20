@@ -4,9 +4,10 @@ import { Joi, Segments } from 'celebrate';
 import { objectIdValidator } from '../utils/objectIdValidator.js';
 import { usersRole } from '../constants/constants.js';
 
-// додавання пагінації у запит get
+// GET запит на отримання усієї колекції
 export const getUserSchema = {
   [Segments.QUERY]: Joi.object({
+    // додавання пагінації у запит get
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
 
@@ -15,10 +16,20 @@ export const getUserSchema = {
 
     // додати параметри для фільтрації можна фідповідно до моделі
     // по кожному або по деяким!!!
-    name: Joi.string().trim(),
+    // name: Joi.string().trim(),
     minAge: Joi.number().positive().integer(),
     maxAge: Joi.number().positive().integer(),
     role: Joi.string().valid(...usersRole),
+
+    // сортування
+    sortBy: Joi.string()
+      .valid('_id', 'name', 'age', 'role', 'createdAt', 'updatedAt')
+      .default('name'),
+    sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
+    /*
+     sortBy → поле для сортування (_id, name, age, avgMark);
+     sortOrder → напрямок (asc або desc), за замовчуванням "asc".
+    */
   }),
 };
 // валідація моделі usera

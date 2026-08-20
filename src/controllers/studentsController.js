@@ -4,9 +4,8 @@ import { Student } from '../models/student.js';
 import createHttpError from 'http-errors';
 
 export const getStudents = async (req, res) => {
-  // вказую параметри пагінації
   const {
-    // для пагінації
+    // вказую параметри пагінації
     page = 1,
     perPage = 5,
     //додаю параметри для фільтрації
@@ -16,6 +15,10 @@ export const getStudents = async (req, res) => {
     minAvgMark,
     //параметри для пошуку
     search,
+    // сортування - вказуємо параметри
+    // дефолтне сортування за id
+    sortBy = '_id',
+    sortOrder = 'asc',
   } = req.query;
 
   const skip = (page - 1) * perPage;
@@ -23,7 +26,7 @@ export const getStudents = async (req, res) => {
   // базовий запит до колекції
   const studentsQuery = Student.find();
 
-  // Пошук по частині імені
+  // Пошук по частині імені // текстовий пошук
   if (search) {
     studentsQuery.where({
       name: { $regex: search, $options: 'i' },
@@ -47,15 +50,18 @@ export const getStudents = async (req, res) => {
     studentsQuery.where('avgMark').gte(minAvgMark);
   }
 
-  // текстовий пошук
-
   //-//-//-//-//-//-//
   //виконуємо два запити паралельно
+  // тут вказуємо параметри для пагінації + сортування
   const [totalItems, students] = await Promise.all([
     studentsQuery.clone().countDocuments(),
     // .countDocuments() — підраховує загальну кількість студентів у колекції.
-    studentsQuery.skip(skip).limit(perPage),
-    // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+    studentsQuery
+      .skip(skip)
+      .limit(perPage)
+      // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+      // Додаємо сортування в ланцюжок методів квері
+      .sort({ [sortBy]: sortOrder }),
   ]);
 
   // Обчислюємо загальну кількість «сторінок»

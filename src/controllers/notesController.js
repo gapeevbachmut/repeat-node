@@ -2,8 +2,8 @@ import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
 export const getNotes = async (req, res) => {
-  // вказую параметри пагінації
   const {
+    // вказую параметри пагінації
     page = 1,
     perPage = 5,
     //додаю параметри для фільтрації
@@ -11,7 +11,12 @@ export const getNotes = async (req, res) => {
     tag,
     //параметри для пошуку
     search,
+    // сортування - вказуємо параметри
+    // дефолтне сортування за id
+    sortBy = '_id',
+    sortOrder = 'asc',
   } = req.query;
+
   const skip = (page - 1) * perPage;
 
   // базовий запит до колекції
@@ -36,11 +41,16 @@ export const getNotes = async (req, res) => {
   }
 
   //виконуємо два запити паралельно
+  // тут вказуємо параметри для пагінації + сортування
+
   const [totalItems, notes] = await Promise.all([
     notesQuery.clone().countDocuments(),
     // .countDocuments() — підраховує загальну кількість студентів у колекції.
-    notesQuery.skip(skip).limit(perPage),
-    // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+    notesQuery
+      .skip(skip)
+      .limit(perPage)
+      // .skip(skip).limit(perPage) — повертає тільки ту частину студентів, яка відповідає потрібній сторінці.
+      .sort({ [sortBy]: sortOrder }),
   ]);
 
   // Обчислюємо загальну кількість «сторінок»
@@ -54,6 +64,8 @@ export const getNotes = async (req, res) => {
     notes,
   });
 };
+
+// отримати note по ID
 
 export const getNoteById = async (req, res) => {
   const { noteId } = req.params;

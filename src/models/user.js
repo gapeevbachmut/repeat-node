@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import { usersRole } from '../constants/constants.js';
 
 const userSchema = new Schema(
   {
@@ -11,20 +12,18 @@ const userSchema = new Schema(
       type: String,
       required: false,
       trim: true,
-      unique: true,
     },
     age: {
       type: Number,
       required: false,
-      trim: true,
     },
     role: {
       type: String,
       required: true,
       trim: true,
-      enum: ['guest', 'user', 'admin'],
+      enum: usersRole,
     },
-    password: {},
+    password: { type: String, required: false },
     avatar: { type: String, required: false, trim: true },
   },
   {
@@ -32,7 +31,13 @@ const userSchema = new Schema(
   },
 );
 
+// Унікальний email тільки для документів,
+// у яких email присутній
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+
 // Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
-userSchema.index({ age: 1, role: 1 });
+// Індекс для фільтрації за віком та роллю
+userSchema.index({ age: 1 });
+/**не треба створювати індекс на кожне поле тільки тому, що по ньому є фільтр. */
 
 export const User = model('User', userSchema);
