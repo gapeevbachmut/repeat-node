@@ -22,25 +22,30 @@ export const getUsers = async (req, res) => {
   // базовий запит до колекції
   const usersQuery = User.find();
 
-  // Пошук по частині імені
+  // Пошук по частині імені/ пошти
   if (search) {
     usersQuery.where({
-      name: { $regex: search, $options: 'i' },
+      $or: [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ],
+      // regex шукає підрядки, але на великих коллекціях він дуже повільний
+      // спробувати - Atlas Search
     });
   }
 
   // Будуємо фільтр
-  if (minAge) {
+  if (minAge !== undefined) {
     usersQuery.where('age').gte(minAge);
     // більше або дорівнює
   }
 
-  if (maxAge) {
+  if (maxAge !== undefined) {
     usersQuery.where('age').lte(maxAge);
     // менше або дорівнює
   }
 
-  if (role) {
+  if (role !== undefined) {
     usersQuery.where('role').equals(role);
   }
 
@@ -82,7 +87,7 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const user = await User.create(req.body);
-  res.status(200).json(user);
+  res.status(201).json(user);
 };
 
 export const deleteUser = async (req, res) => {

@@ -30,23 +30,31 @@ export const getStudents = async (req, res) => {
   if (search) {
     studentsQuery.where({
       name: { $regex: search, $options: 'i' },
+      // regex шукає підрядки, але на великих коллекціях він дуже повільний
+      // спробувати - Atlas Search
     });
   }
+  /** // текстовий пошук через text index - повне співпадіння
+  if (search) {
+    studentsQuery.where({
+      $text: { $search: search },
+    });
+  }*/
 
   // Будуємо фільтр
 
-  if (minAge) {
+  if (minAge !== undefined) {
     studentsQuery.where('age').gte(minAge);
   }
-  if (maxAge) {
+  if (maxAge !== undefined) {
     studentsQuery.where('age').lte(maxAge);
   }
 
-  if (gender) {
+  if (gender !== undefined) {
     studentsQuery.where('gender').equals(gender);
   }
 
-  if (minAvgMark) {
+  if (minAvgMark !== undefined) {
     studentsQuery.where('avgMark').gte(minAvgMark);
   }
 

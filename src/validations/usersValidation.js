@@ -11,7 +11,7 @@ export const getUserSchema = {
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
 
-    // текстовий пошук for name
+    // текстовий пошук
     search: Joi.string().trim().allow(''),
 
     // додати параметри для фільтрації можна фідповідно до моделі
@@ -32,6 +32,7 @@ export const getUserSchema = {
     */
   }),
 };
+
 // валідація моделі usera
 const bodySchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
@@ -68,16 +69,8 @@ export const userIdParamSchema = {
 };
 
 // оновлення юзера
-const bodyShemaUpdateUser = Joi.object({
-  name: Joi.string().min(3).max(30),
-  email: Joi.string(),
-  age: Joi.number().integer().min(12).max(65),
-  role: Joi.string().valid('guest', 'user', 'admin'),
-  password: Joi.string(),
-  awatar: Joi.string(),
-});
 
 export const updateUserSchema = {
   [Segments.PARAMS]: userIdSchema,
-  [Segments.BODY]: bodyShemaUpdateUser.min(1),
+  [Segments.BODY]: bodySchema.min(1),
 };

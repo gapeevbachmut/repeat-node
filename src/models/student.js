@@ -32,7 +32,9 @@ const studentSchema = new Schema(
   },
 );
 
-studentSchema.index({ age: 1, gender: 1, avgMark: 1 });
+// studentSchema.index({ name: 'text' });
+// текстовий індекс для пошуку по name через $text
+
 // Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
 /**не треба створювати індекс на кожне поле тільки тому, що по ньому є фільтр. */
 

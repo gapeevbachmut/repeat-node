@@ -28,16 +28,14 @@ const userSchema = new Schema(
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 
-// Унікальний email тільки для документів,
-// у яких email присутній
+// Унікальний email тільки для документів, у яких email присутній
+// індекс для пошуку конкретного email
 userSchema.index({ email: 1 }, { unique: true, sparse: true });
 
-// Індекси у MongoDB для пошуку - усі властивості по яких шукаємо/ фільтруємо
-// Індекс для фільтрації за віком та роллю
-userSchema.index({ age: 1 });
 /**не треба створювати індекс на кожне поле тільки тому, що по ньому є фільтр. */
 
 export const User = model('User', userSchema);

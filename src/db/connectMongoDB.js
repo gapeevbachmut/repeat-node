@@ -10,7 +10,8 @@ export const connectMongoDB = async () => {
     await mongoose.connect(mongoUrl);
     console.log('✅ MongoDB connection established successfully');
 
-    //
+    //сінхронізація індексів
+    //додає індекси та де їх не було
     // гарантуємо, що індекси в БД відповідають схемі
     await Student.syncIndexes();
     await Note.syncIndexes();

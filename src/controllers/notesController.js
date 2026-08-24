@@ -7,7 +7,7 @@ export const getNotes = async (req, res) => {
     page = 1,
     perPage = 5,
     //додаю параметри для фільтрації
-    title,
+    // title,
     tag,
     //параметри для пошуку
     search,
@@ -22,17 +22,18 @@ export const getNotes = async (req, res) => {
   // базовий запит до колекції
   const notesQuery = Note.find();
 
-  // Пошук по частині content
+  // Пошук по частині content and title
   if (search) {
-    notesQuery.where({
-      content: { $regex: search, $options: 'i' },
-    });
-  }
-
-  // Будуємо фільтр
-  if (title) {
-    notesQuery.where('title').regex(new RegExp(title, 'i'));
-    //'i' означає ігнорувати регістр.
+    notesQuery.where(
+      {
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { content: { $regex: search, $options: 'i' } },
+        ],
+      },
+      // regex шукає підрядки, але на великих коллекціях він дуже повільний
+      // спробувати - Atlas Search
+    );
   }
 
   if (tag) {
