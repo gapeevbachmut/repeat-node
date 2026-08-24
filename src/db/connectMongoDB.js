@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import { Student } from '../models/student.js';
 import { Note } from '../models/note.js';
-import { User } from '../models/user.js';
+// import { User } from '../models/user.js';
 
 export const connectMongoDB = async () => {
   try {
@@ -15,7 +15,7 @@ export const connectMongoDB = async () => {
     // гарантуємо, що індекси в БД відповідають схемі
     await Student.syncIndexes();
     await Note.syncIndexes();
-    await User.syncIndexes();
+    // await User.syncIndexes();
 
     console.log('Indexes synced successfully');
   } catch (error) {

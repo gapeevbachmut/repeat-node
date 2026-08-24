@@ -11,6 +11,7 @@ import { connectMongoDB } from './db/connectMongoDB.js';
 import studentsRoutes from './routes/studentsRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'Hello - wWworld!' });
 });
 
+app.use(authRoutes);
 app.use(studentsRoutes);
 app.use(notesRoutes);
 app.use(usersRoutes);

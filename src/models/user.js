@@ -10,7 +10,8 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: false,
+      required: true,
+      unique: true,
       trim: true,
     },
     age: {
@@ -23,7 +24,7 @@ const userSchema = new Schema(
       trim: true,
       enum: usersRole,
     },
-    password: { type: String, required: false },
+    password: { type: String, required: true },
     avatar: { type: String, required: false, trim: true },
   },
   {
@@ -32,9 +33,20 @@ const userSchema = new Schema(
   },
 );
 
-// Унікальний email тільки для документів, у яких email присутній
-// індекс для пошуку конкретного email
-userSchema.index({ email: 1 }, { unique: true, sparse: true });
+//  якщо name — необов'язкове поле. За замовчуванням воно дорівнює email
+// userSchema.pre('save', function () {
+//   if (!this.name) {
+//     this.name = this.email;
+//   }
+// });
+
+// Видалення паролю з відповіді
+// Перевизначаємо метод toJSON
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
 /**не треба створювати індекс на кожне поле тільки тому, що по ньому є фільтр. */
 

@@ -41,7 +41,10 @@ const bodySchema = Joi.object({
     'string.max': 'Name should have at most {#limit} characters',
     'any.required': 'Name is required',
   }),
-  email: Joi.string(),
+  email: Joi.string().required().messages({
+    'string.base': 'Name must be a string',
+    'any.required': 'Email is required',
+  }),
   age: Joi.number().integer().min(12).max(65).required().messages({
     // 12 років - 65 років
     'number.base': 'Age must be a number',
