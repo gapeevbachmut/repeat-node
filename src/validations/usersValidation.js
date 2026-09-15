@@ -42,21 +42,21 @@ const bodySchema = Joi.object({
     'any.required': 'Name is required',
   }),
   email: Joi.string().required().messages({
-    'string.base': 'Name must be a string',
+    'string.base': 'Email must be a string',
     'any.required': 'Email is required',
   }),
-  age: Joi.number().integer().min(12).max(65).required().messages({
+  age: Joi.number().integer().min(12).max(65).messages({
     // 12 років - 65 років
     'number.base': 'Age must be a number',
     'number.min': 'Age must be at least {#limit}',
     'number.max': 'Age must be at most {#limit}',
-    'any.required': 'Age is required',
   }),
-  role: Joi.string().valid('guest', 'user', 'admin').required().messages({
+  role: Joi.string().valid('guest', 'user', 'admin').default('user').messages({
     'any.only': 'Role must be one of:guest, user, admin',
-    'any.required': 'Role is required',
   }),
-  password: Joi.string(),
+  password: Joi.string().min(8).max(30).required().messages({
+    'any.required': 'password is REQUIRED',
+  }),
   awatar: Joi.string(),
 });
 
