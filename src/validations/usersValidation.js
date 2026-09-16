@@ -11,6 +11,8 @@ export const getUserSchema = {
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20),
 
+    email: Joi.string().email().lowercase(),
+
     // текстовий пошук
     search: Joi.string().trim().allow(''),
 
@@ -52,7 +54,7 @@ const bodySchema = Joi.object({
     'number.max': 'Age must be at most {#limit}',
   }),
   role: Joi.string().valid('guest', 'user', 'admin').default('user').messages({
-    'any.only': 'Role must be one of:guest, user, admin',
+    'any.only': 'Role must be one of:........./ Role - USER ',
   }),
   password: Joi.string().min(8).max(30).required().messages({
     'any.required': 'password is REQUIRED',
