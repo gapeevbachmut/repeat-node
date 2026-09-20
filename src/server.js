@@ -12,6 +12,7 @@ import studentsRoutes from './routes/studentsRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -21,6 +22,7 @@ app.use(logger); // 1. Логер першим — бачить усі запи�
 app.use(express.json()); // 2. Middleware для парсингу JSON
 app.use(cors()); // 3. Дозволяє запити з будь-яких джерел
 app.use(helmet()); // безпека
+app.use(cookieParser());
 
 // Перший маршрут
 app.get('/', (req, res) => {
